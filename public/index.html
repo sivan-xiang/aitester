@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AI 自动测试工具</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🤖 AI 自动测试工具</div>
+    <div class="sub">填测试地址 / 账号密码 / 需求ID → 自动拉需求 → AI 生成用例 → Playwright 执行 → 报告</div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <h2>1. 测试环境与需求</h2>
+      <div class="grid">
+        <label>测试地址<div class="hint">如 http://lstest.com/#/dashboard</div>
+          <input id="baseUrl" placeholder="http://lstest.com/#/dashboard"></label>
+        <label>账号<input id="username" placeholder="admin"></label>
+        <label>密码<input id="password" type="password" placeholder="123456"></label>
+        <label>需求 ID（可选）<div class="hint">如 WYWC-12149，留空则只用下方 PRD</div>
+          <input id="requirementId" placeholder="WYWC-12149"></label>
+      </div>
+      <label class="full">PRD / 验收要点（可选，粘贴需求正文或截图说明）
+        <textarea id="prdText" rows="4" placeholder="例如：放开【直客客户T量完成率】【重点船东T量完成率】两个指标的可编辑；保存后列表回显最新值。"></textarea>
+      </label>
+      <label class="full">需求截图（可选，仅当 LLM 支持图片时生效）
+        <input id="screenshot" type="file" accept="image/*"></label>
+      <div class="actions">
+        <button id="btnIntake">① 拉取需求</button>
+        <button id="btnGenerate" class="primary">② AI 生成测试用例</button>
+        <button id="btnRun" class="primary" disabled>③ 执行测试</button>
+      </div>
+    </section>
+
+    <section class="card" id="reqCard" hidden>
+      <h2>需求摘要</h2>
+      <div id="reqView" class="reqview"></div>
+    </section>
+
+    <section class="card" id="planCard" hidden>
+      <h2>生成的测试用例</h2>
+      <div id="planView"></div>
+    </section>
+
+    <section class="card" id="runCard" hidden>
+      <h2>执行结果</h2>
+      <div id="runStatus" class="runstatus">准备就绪</div>
+      <div id="reportBox" hidden>
+        <div class="totals" id="totals"></div>
+        <iframe id="reportFrame" title="测试报告"></iframe>
+      </div>
+    </section>
+
+    <section class="card logcard">
+      <h2>运行日志</h2>
+      <pre id="log"></pre>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
