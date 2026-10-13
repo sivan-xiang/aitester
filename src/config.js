@@ -16,6 +16,8 @@ export const config = {
     model: process.env.LLM_MODEL || '',
     supportsVision: String(process.env.LLM_SUPPORTS_VISION || 'false').toLowerCase() === 'true',
     jsonMode: String(process.env.LLM_JSON_MODE || 'true').toLowerCase() === 'true',
+    // 演示/自检模式：无需任何外部 LLM，直接返回内置示例用例，用于验证整套流程（生成→执行→报告）。
+    mock: String(process.env.LLM_MOCK || 'false').toLowerCase() === 'true',
   },
   yunxiao: {
     token: process.env.YUNXIAO_TOKEN || '',

@@ -49,10 +49,12 @@ app.post('/api/generate', upload.single('screenshot'), async (req, res) => {
 });
 
 app.get('/api/llm/status', async (req, res) => {
-  const { baseUrl, model, supportsVision, jsonMode } = config.llm;
-  const info = { configured: !!(baseUrl && model), baseUrl, model, supportsVision, jsonMode };
+  const { baseUrl, model, supportsVision, jsonMode, mock } = config.llm;
+  const info = { configured: !!(baseUrl && model) || mock, mock, baseUrl, model, supportsVision, jsonMode };
   let probe = null;
-  if (baseUrl) {
+  if (mock) {
+    probe = { mock: true, ok: true };
+  } else if (baseUrl) {
     try {
       const u = new URL(baseUrl);
       if ((u.hostname === 'localhost' || u.hostname === '127.0.0.1') && u.port === '11434') {

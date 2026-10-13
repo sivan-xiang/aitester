@@ -13,6 +13,11 @@ async function checkLLMStatus() {
   const el = $('llmStatus');
   try {
     const s = await (await fetch('/api/llm/status')).json();
+    if (s.mock) {
+      el.className = 'llm-status ok';
+      el.textContent = `✓ Mock 演示模式：未调用真实 LLM，使用内置示例用例（用于自检/演示）。配置 LLM_BASE_URL 后即为真实生成。`;
+      return;
+    }
     if (!s.configured) {
       el.className = 'llm-status err';
       el.textContent = '⚠ 未配置 LLM：请在 .env 设置 LLM_BASE_URL 与 LLM_MODEL（Ollama 用 http://localhost:11434/v1，无需 key）';
@@ -72,7 +77,7 @@ $('btnIntake').addEventListener('click', async () => {
 
 $('btnGenerate').addEventListener('click', async () => {
   $('btnGenerate').disabled = true;
-  log('AI 生成测试用例中（调用 LLM）…');
+  log('AI 生成测试用例中…');
   try {
     const fd = new FormData();
     fd.append('requirementId', val('requirementId'));

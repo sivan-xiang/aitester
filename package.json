@@ -6,6 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "start:mock": "LLM_MOCK=true node server.js",
     "install:browsers": "npx playwright install chromium",
     "extract-context": "node scripts/extract-context.mjs"
   },

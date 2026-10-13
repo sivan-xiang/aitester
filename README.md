@@ -52,6 +52,31 @@ npm start
 > 也支持 DeepSeek / OpenAI / 通义等云端接口（填对应 key）。若模型支持图片，设 `LLM_SUPPORTS_VISION=true`，上传的截图会一并传入。
 > 工具首页会自动检测 Ollama/LLM 是否就绪（模型是否拉取、是否运行），未就绪会给出提示。
 
+### 演示 / 自检模式（免 Ollama，推荐先跑通）
+
+还没装 Ollama、或只想**先验证整套工具的流程是否跑得通**时，可开启 Mock 模式：它不调用任何真实 LLM，直接返回内置示例用例，但**生成 → 执行 → 报告**全链路与真实模式完全一致。
+
+```bash
+# 方式一：用脚本（自动开 LLM_MOCK=true）
+npm run start:mock
+
+# 方式二：在 .env 里设
+LLM_MOCK=true
+npm start
+```
+
+开启后首页状态徽标显示「✓ Mock 演示模式」，生成的用例为内置示例（登录 → 进入薪酬绩效 → 填写完成率 → 保存 → 断言），可直接点「③ 执行测试」看效果。
+要验证执行链路，把**测试地址**填成本仓库自带的模拟站点：
+
+```bash
+# 另开一个终端，启动模拟目标（仿 freighthouse 的登录 + 薪酬绩效页面）
+cd scripts && npx http-server -p 8799 .   # 或任意静态服务器
+# 测试地址填： http://localhost:8799/mock-target.html#/dashboard
+# 账号/密码： admin / 123456
+```
+
+> Mock 模式仅用于自检/演示，**不代表真实需求覆盖**。配置好真实 LLM（Ollama / DeepSeek 等）并设置 `LLM_MOCK=false`（默认）后即恢复 AI 真实生成。
+
 > **云效令牌**：默认自动读取本机 `~/.workbuddy/mcp.json` 里 yunxiao 的 `YUNXIAO_ACCESS_TOKEN`，无需额外配置。
 > 组织 ID `5f070913d2481460393369f3`、项目 `7d5f913802c9042432514c9441` 已内置默认值。
 
