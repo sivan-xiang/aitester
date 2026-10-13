@@ -48,6 +48,31 @@ app.post('/api/generate', upload.single('screenshot'), async (req, res) => {
   }
 });
 
+app.get('/api/llm/status', async (req, res) => {
+  const { baseUrl, model, supportsVision, jsonMode } = config.llm;
+  const info = { configured: !!(baseUrl && model), baseUrl, model, supportsVision, jsonMode };
+  let probe = null;
+  if (baseUrl) {
+    try {
+      const u = new URL(baseUrl);
+      if ((u.hostname === 'localhost' || u.hostname === '127.0.0.1') && u.port === '11434') {
+        const r = await fetch('http://localhost:11434/api/tags', { signal: AbortSignal.timeout(2500) });
+        if (r.ok) {
+          const j = await r.json();
+          const models = (j.models || []).map((m) => m.name);
+          probe = { ollama: true, ok: true, models, modelPresent: models.includes(model) };
+        } else {
+          probe = { ollama: true, ok: false, error: `HTTP ${r.status}` };
+        }
+      }
+    } catch (e) {
+      probe = { ollama: true, ok: false, error: e.message };
+    }
+  }
+  info.probe = probe;
+  res.json(info);
+});
+
 app.post('/api/run', async (req, res) => {
   try {
     const { plan, baseUrl, username, password } = req.body || {};

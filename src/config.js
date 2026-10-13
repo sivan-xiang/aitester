@@ -15,6 +15,7 @@ export const config = {
     apiKey: process.env.LLM_API_KEY || '',
     model: process.env.LLM_MODEL || '',
     supportsVision: String(process.env.LLM_SUPPORTS_VISION || 'false').toLowerCase() === 'true',
+    jsonMode: String(process.env.LLM_JSON_MODE || 'true').toLowerCase() === 'true',
   },
   yunxiao: {
     token: process.env.YUNXIAO_TOKEN || '',

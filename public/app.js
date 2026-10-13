@@ -9,6 +9,38 @@ function log(msg) {
 
 function val(id) { return $(id).value.trim(); }
 
+async function checkLLMStatus() {
+  const el = $('llmStatus');
+  try {
+    const s = await (await fetch('/api/llm/status')).json();
+    if (!s.configured) {
+      el.className = 'llm-status err';
+      el.textContent = '⚠ 未配置 LLM：请在 .env 设置 LLM_BASE_URL 与 LLM_MODEL（Ollama 用 http://localhost:11434/v1，无需 key）';
+      return;
+    }
+    if (s.probe && s.probe.ollama) {
+      if (!s.probe.ok) {
+        el.className = 'llm-status err';
+        el.textContent = `⚠ 本地 Ollama 未运行（${s.probe.error}）。请先安装并启动 Ollama，再 ollama pull ${s.model}`;
+        return;
+      }
+      if (!s.probe.modelPresent) {
+        el.className = 'llm-status warn';
+        el.textContent = `⚠ Ollama 已运行，但未拉取模型「${s.model}」。请执行：ollama pull ${s.model}`;
+        return;
+      }
+      el.className = 'llm-status ok';
+      el.textContent = `✓ Ollama 就绪（模型 ${s.model}）`;
+      return;
+    }
+    el.className = 'llm-status ok';
+    el.textContent = `✓ LLM 已配置（${s.model}）`;
+  } catch (e) {
+    el.className = 'llm-status warn';
+    el.textContent = 'LLM 状态检测失败（服务可能未启动）';
+  }
+}
+
 async function postJSON(url, body) {
   const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const data = await r.json().catch(() => ({}));
@@ -103,3 +135,5 @@ $('btnRun').addEventListener('click', async () => {
     $('btnRun').disabled = false;
   }
 });
+
+checkLLMStatus();

@@ -37,8 +37,20 @@ npm start
 ```
 
 > **LLM 说明**：本工具通过你自己的 **OpenAI 兼容接口**生成用例（免云密钥、无需开通任何云服务）。
-> 在 `.env` 填 `LLM_BASE_URL / LLM_API_KEY / LLM_MODEL`（支持 DeepSeek / OpenAI / 通义 / Ollama 等）。
-> 若模型支持图片，设 `LLM_SUPPORTS_VISION=true`，上传的截图会一并传入。
+> **推荐本地零成本方案 Ollama**（无需 key、完全离线）：
+> ```bash
+> # 安装 Ollama 后，拉取一个中文友好、支持结构化输出的模型
+> ollama pull qwen2.5:7b
+> ```
+> 然后在 `.env` 配置：
+> ```
+> LLM_BASE_URL=http://localhost:11434/v1
+> LLM_API_KEY=ollama          # Ollama 不校验，任意非空即可
+> LLM_MODEL=qwen2.5:7b
+> LLM_JSON_MODE=true           # 若模型不支持 json_object 报错，改为 false
+> ```
+> 也支持 DeepSeek / OpenAI / 通义等云端接口（填对应 key）。若模型支持图片，设 `LLM_SUPPORTS_VISION=true`，上传的截图会一并传入。
+> 工具首页会自动检测 Ollama/LLM 是否就绪（模型是否拉取、是否运行），未就绪会给出提示。
 
 > **云效令牌**：默认自动读取本机 `~/.workbuddy/mcp.json` 里 yunxiao 的 `YUNXIAO_ACCESS_TOKEN`，无需额外配置。
 > 组织 ID `5f070913d2481460393369f3`、项目 `7d5f913802c9042432514c9441` 已内置默认值。
